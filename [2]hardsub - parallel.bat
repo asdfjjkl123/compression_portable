@@ -1,4 +1,4 @@
-::@echo off
+@echo off
 :path
 call "%~dp0[0]set_path.bat"
 
@@ -130,7 +130,7 @@ echo import mvsfunc as mvf >>"%~dpnx1_1080_sc.vpy"
 echo from vapoursynth import core >>"%~dpnx1_1080_sc.vpy"
 echo source = r%mkv% >>"%~dpnx1_1080_sc.vpy"
 echo ass = r%sc% >>"%~dpnx1_1080_sc.vpy"
-echo src = core.lsmas.LWLibavSource(source,format="yuv420p10") >>"%~dpnx1_1080_sc.vpy"
+echo src = core.lsmas.LWLibavSource(source,format="yuv420p10",cache=0) >>"%~dpnx1_1080_sc.vpy"
 echo src = mvf.Depth(src,depth=8) >>"%~dpnx1_1080_sc.vpy"
 if %subfilter%==0 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_1080_sc.vpy"
 if %subfilter%==1 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dpnx1_1080_sc.vpy"
@@ -165,7 +165,7 @@ echo import mvsfunc as mvf >>"%~dpnx1_1080_tc.vpy"
 echo from vapoursynth import core >>"%~dpnx1_1080_tc.vpy"
 echo source = r%mkv% >>"%~dpnx1_1080_tc.vpy"
 echo ass = r%tc% >>"%~dpnx1_1080_tc.vpy"
-echo src = core.lsmas.LWLibavSource(source,format="yuv420p10") >>"%~dpnx1_1080_tc.vpy"
+echo src = core.lsmas.LWLibavSource(source,format="yuv420p10",cache=0) >>"%~dpnx1_1080_tc.vpy"
 echo src = mvf.Depth(src,depth=8) >>"%~dpnx1_1080_tc.vpy"
 if %subfilter%==0 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_1080_tc.vpy"
 if %subfilter%==1 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dpnx1_1080_tc.vpy"
@@ -200,7 +200,7 @@ echo import mvsfunc as mvf >>"%~dpnx1_720_sc.vpy"
 echo from vapoursynth import core >>"%~dpnx1_720_sc.vpy"
 echo source = r%mkv% >>"%~dpnx1_720_sc.vpy"
 echo ass = r%sc% >>"%~dpnx1_720_sc.vpy"
-echo src = core.lsmas.LWLibavSource(source,format="yuv420p10") >>"%~dpnx1_720_sc.vpy"
+echo src = core.lsmas.LWLibavSource(source,format="yuv420p10",cache=0) >>"%~dpnx1_720_sc.vpy"
 echo src = core.fmtc.resample(src,1280,720,kernel="lanczos",taps=4) >>"%~dpnx1_720_sc.vpy"
 echo src = mvf.Depth(src,depth=8) >>"%~dpnx1_720_sc.vpy"
 if %subfilter%==0 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_720_sc.vpy"
@@ -233,7 +233,7 @@ echo import mvsfunc as mvf >>"%~dpnx1_720_tc.vpy"
 echo from vapoursynth import core >>"%~dpnx1_720_tc.vpy"
 echo source = r%mkv% >>"%~dpnx1_720_tc.vpy"
 echo ass = r%tc% >>"%~dpnx1_720_tc.vpy"
-echo src = core.lsmas.LWLibavSource(source,format="yuv420p10") >>"%~dpnx1_720_tc.vpy"
+echo src = core.lsmas.LWLibavSource(source,format="yuv420p10",cache=0) >>"%~dpnx1_720_tc.vpy"
 echo src = core.fmtc.resample(src,1280,720,kernel="lanczos",taps=4) >>"%~dpnx1_720_tc.vpy"
 echo src = mvf.Depth(src,depth=8) >>"%~dpnx1_720_tc.vpy"
 if %subfilter%==0 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_720_tc.vpy"
@@ -257,5 +257,4 @@ goto :start
 
 
 :end
-pause
 exit
