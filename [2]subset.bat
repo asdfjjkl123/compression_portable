@@ -10,6 +10,7 @@ set files=0
 IF "%~1"=="" GOTO :end
 
 if exist "ass_warn.log" del "ass_warn.log"
+if exist "temp.bat" del "temp.bat"
 
 set /a files+=1
 set continue=0
@@ -94,6 +95,7 @@ for /f "tokens=*" %%a in (ass_warn.log) do (
 
 taskkill /im FontLoader.exe
 timeout 2
+if exist "temp.bat" del "temp.bat"
 
 echo.
 if not %filesize%==0 echo if ass contains \N or \h or somethings like them, finding missing character "\" is totally normal.
