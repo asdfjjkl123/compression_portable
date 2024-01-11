@@ -21,6 +21,10 @@ if %allfilesame%==1 set /p dsaa=anti-aliasing(0:no, 1:yes):
 if "%~1"=="" goto :end
 set /a files+=1
 
+if exist "%~dp1%~nx1.vpy" del "%~dp1%~nx1.vpy"
+if exist "%~dp1%~nx1.lwi" del "%~dp1%~nx1.lwi"
+if exist "%~dpn1.hevc" del "%~dpn1.hevc"
+
 %eac3to% "%~1" "%~dpn1".aac -log=nul
 
 if %trim% GTR 0 set /a trimaudio=%trim%*1001*10/24
@@ -134,6 +138,7 @@ del "%~dp1%~nx1.lwi"
 if %trim%==0 %mmg% -o "%~dpn1_encode.mkv" --language 0:und "%~dpn1.hevc" --language 0:jpn "%~dpn1.aac"
 if %trim% GTR 0 %mmg% -o "%~dpn1_encode.mkv" --language 0:und "%~dpn1.hevc" --language 0:jpn "%~dp1%~nx1_trimed.aac"
 
+if exist "%~dpn1_encode.mkv" del "%~dpn1.hevc"
 
 shift /1
 goto :start_audio
