@@ -122,8 +122,8 @@ if %resolution%==2 goto :1080p
 if %sc%==0 goto :1080tc
 if %f1080scover%==0 goto :1080scfinish
 
-if exist "%~dpnx1_720_tc.vpy" del "%~dpnx1_1080_sc.vpy"
-if exist "%~dpnx1_720_tc.bat" del "%~dpnx1_1080_sc.bat"
+if exist "%~dpnx1_1080_sc.vpy" del "%~dpnx1_1080_sc.vpy"
+if exist "%~dpnx1_1080_sc.bat" del "%~dpnx1_1080_sc.bat"
 echo import vapoursynth as vs >>"%~dpnx1_1080_sc.vpy"
 echo import sys >>"%~dpnx1_1080_sc.vpy"
 echo import mvsfunc as mvf >>"%~dpnx1_1080_sc.vpy"
@@ -144,6 +144,7 @@ echo if exist "%~n1[1080p][CHS].mp4" del "%~dpnx1_1080_sc.vpy">>"%~dpnx1_1080_sc
 echo if exist "%~n1[1080p][CHS].mp4" del "%~n1_1080p_sc.264">>"%~dpnx1_1080_sc.bat"
 echo if exist "%~n1[1080p][JPSC].mp4" del "%~dpnx1_1080_sc.vpy">>"%~dpnx1_1080_sc.bat"
 echo if exist "%~n1[1080p][JPSC].mp4" del "%~n1_1080p_sc.264">>"%~dpnx1_1080_sc.bat"
+echo if exist "%~n1[1080p][JPSC].mp4" del "%~dpnx1_1080_sc.bat">>"%~dpnx1_1080_sc.bat"
 echo exit>>"%~dpnx1_1080_sc.bat"
 timeout 1
 start "coding %~n1 1080p sc" "%~dpnx1_1080_sc.bat"
@@ -157,8 +158,8 @@ if %tc%==0 (
 :1080tc
 if %f1080tcover%==0 goto :1080tcfinish
 
-if exist "%~dpnx1_720_tc.vpy" del "%~dpnx1_1080_tc.vpy"
-if exist "%~dpnx1_720_tc.bat" del "%~dpnx1_1080_tc.bat"
+if exist "%~dpnx1_1080_tc.vpy" del "%~dpnx1_1080_tc.vpy"
+if exist "%~dpnx1_1080_tc.bat" del "%~dpnx1_1080_tc.bat"
 echo import vapoursynth as vs >>"%~dpnx1_1080_tc.vpy"
 echo import sys >>"%~dpnx1_1080_tc.vpy"
 echo import mvsfunc as mvf >>"%~dpnx1_1080_tc.vpy"
@@ -179,6 +180,7 @@ echo if exist "%~n1[1080p][CHT].mp4" del "%~dpnx1_1080_tc.vpy">>"%~dpnx1_1080_tc
 echo if exist "%~n1[1080p][CHT].mp4" del "%~n1_1080p_tc.264">>"%~dpnx1_1080_tc.bat"
 echo if exist "%~n1[1080p][JPTC].mp4" del "%~dpnx1_1080_tc.vpy">>"%~dpnx1_1080_tc.bat"
 echo if exist "%~n1[1080p][JPTC].mp4" del "%~n1_1080p_tc.264">>"%~dpnx1_1080_tc.bat"
+echo if exist "%~n1[1080p][JPTC].mp4" del "%~dpnx1_1080_tc.bat">>"%~dpnx1_1080_tc.bat"
 echo exit>>"%~dpnx1_1080_tc.bat"
 timeout 1
 start "coding %~n1 1080p tc" "%~dpnx1_1080_tc.bat"
@@ -192,8 +194,8 @@ goto :start
 if %sc%==0 goto :720tc
 if %f720scover%==0 goto :720scfinish
 
-if exist "%~dpnx1_720_tc.vpy" del "%~dpnx1_720_sc.vpy"
-if exist "%~dpnx1_720_tc.bat" del "%~dpnx1_720_sc.bat"
+if exist "%~dpnx1_720_sc.vpy" del "%~dpnx1_720_sc.vpy"
+if exist "%~dpnx1_720_sc.bat" del "%~dpnx1_720_sc.bat"
 echo import vapoursynth as vs >>"%~dpnx1_720_sc.vpy"
 echo import sys >>"%~dpnx1_720_sc.vpy"
 echo import mvsfunc as mvf >>"%~dpnx1_720_sc.vpy"
@@ -215,6 +217,7 @@ echo if exist "%~n1[720p][CHS].mp4" del "%~dpnx1_720_sc.vpy">>"%~dpnx1_720_sc.ba
 echo if exist "%~n1[720p][CHS].mp4" del "%~n1_720p_sc.264">>"%~dpnx1_720_sc.bat"
 echo if exist "%~n1[720p][JPSC].mp4" del "%~dpnx1_720_sc.vpy">>"%~dpnx1_720_sc.bat"
 echo if exist "%~n1[720p][JPSC].mp4" del "%~n1_720p_sc.264">>"%~dpnx1_720_sc.bat"
+echo if exist "%~n1[720p][JPSC].mp4" del "%~dpnx1_720_sc.bat">>"%~dpnx1_720_sc.bat"
 echo exit>>"%~dpnx1_720_sc.bat"
 timeout 1
 start "coding %~n1 720 sc" "%~nx1_720_sc.bat"
@@ -248,6 +251,7 @@ echo if exist "%~n1[720p][CHT].mp4" del "%~dpnx1_720_tc.vpy">>"%~dpnx1_720_tc.ba
 echo if exist "%~n1[720p][CHT].mp4" del "%~n1_720p_tc.264">>"%~dpnx1_720_tc.bat"
 echo if exist "%~n1[720p][JPTC].mp4" del "%~dpnx1_720_tc.vpy">>"%~dpnx1_720_tc.bat"
 echo if exist "%~n1[720p][JPTC].mp4" del "%~n1_720p_tc.264">>"%~dpnx1_720_tc.bat"
+echo if exist "%~n1[720p][JPTC].mp4" del "%~dpnx1_720_tc.bat">>"%~dpnx1_720_tc.bat"
 echo exit>>"%~dpnx1_720_tc.bat"
 timeout 1
 start "coding %~n1 720 tc" "%~nx1_720_tc.bat"
