@@ -4,7 +4,7 @@ call "%~dp0[0]set_path.bat"
 
 :branch
 set /p resolution=Please select output videos' resolution (0: 1080p, 1: 720p, 2:1080p+720p):
-set /p subfilter=Please select subfilter (0: xyvsf, 1: assrender, 2:vsfm):
+set /p subfilter=Please select subfilter (1:assrender , 0: xyvsf, 2:vsfm):
 
 set x264info=--demuxer y4m --threads 16 --preset slow --crf 23 --deblock 1:-1 --keyint 300 --min-keyint 1 --ref 6 --qpmax 36 --chroma-qp-offset 2 --me hex --psy-rd 0.60:0.15 --no-fast-pskip --colormatrix bt709 --colorprim bt709 --transfer bt709
 
@@ -127,8 +127,8 @@ echo source = r%mkv% >>"%~dp1%~nx1.vpy"
 echo ass = r%sc% >>"%~dp1%~nx1.vpy"
 echo src = core.lsmas.LWLibavSource(source,format="yuv420p10") >>"%~dp1%~nx1.vpy"
 echo src = mvf.Depth(src,depth=8) >>"%~dp1%~nx1.vpy"
-if %subfilter%==0 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
-if %subfilter%==1 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
+if %subfilter%==0 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
+if %subfilter%==1 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
 if %subfilter%==2 echo res = core.vsfm.TextSubMod(src,ass).set_output() >>"%~dp1%~nx1.vpy"
 
 %vspipe% --y4m "%~dp1%~nx1.vpy" - | %x264% %x264info% --output "%~n1_1080p_sc.264" -
@@ -158,8 +158,8 @@ echo source = r%mkv% >>"%~dp1%~nx1.vpy"
 echo ass = r%tc% >>"%~dp1%~nx1.vpy"
 echo src = core.lsmas.LWLibavSource(source,format="yuv420p10") >>"%~dp1%~nx1.vpy"
 echo src = mvf.Depth(src,depth=8) >>"%~dp1%~nx1.vpy"
-if %subfilter%==0 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
-if %subfilter%==1 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
+if %subfilter%==0 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
+if %subfilter%==1 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
 if %subfilter%==2 echo res = core.vsfm.TextSubMod(src,ass).set_output() >>"%~dp1%~nx1.vpy"
 
 %vspipe% --y4m "%~dp1%~nx1.vpy" - | %x264% %x264info% --output "%~n1_1080p_tc.264" -
@@ -190,8 +190,8 @@ echo ass = r%sc% >>"%~dp1%~nx1.vpy"
 echo src = core.lsmas.LWLibavSource(source,format="yuv420p10") >>"%~dp1%~nx1.vpy"
 echo src = core.fmtc.resample(src,1280,720,kernel="lanczos",taps=4) >>"%~dp1%~nx1.vpy"
 echo src = mvf.Depth(src,depth=8) >>"%~dp1%~nx1.vpy"
-if %subfilter%==0 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
-if %subfilter%==1 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
+if %subfilter%==0 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
+if %subfilter%==1 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
 if %subfilter%==2 echo res = core.vsfm.TextSubMod(src,ass).set_output() >>"%~dp1%~nx1.vpy"
 
 %vspipe% --y4m "%~dp1%~nx1.vpy" - | %x264% %x264info% --output "%~n1_720p_sc.264" -
@@ -219,8 +219,8 @@ echo ass = r%tc% >>"%~dp1%~nx1.vpy"
 echo src = core.lsmas.LWLibavSource(source,format="yuv420p10") >>"%~dp1%~nx1.vpy"
 echo src = core.fmtc.resample(src,1280,720,kernel="lanczos",taps=4) >>"%~dp1%~nx1.vpy"
 echo src = mvf.Depth(src,depth=8) >>"%~dp1%~nx1.vpy"
-if %subfilter%==0 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
-if %subfilter%==1 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
+if %subfilter%==0 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
+if %subfilter%==1 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dp1%~nx1.vpy"
 if %subfilter%==2 echo res = core.vsfm.TextSubMod(src,ass).set_output() >>"%~dp1%~nx1.vpy"
 
 %vspipe% --y4m "%~dp1%~nx1.vpy" - | %x264% %x264info% --output "%~n1_720p_tc.264" -

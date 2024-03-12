@@ -4,7 +4,7 @@ call "%~dp0[0]set_path.bat"
 
 :branch
 set /p resolution=Please select output videos' resolution (0: 1080p, 1: 720p, 2:1080p+720p):
-set /p subfilter=Please select subfilter (0: xyvsf, 1: assrender, 2:vsfm):
+set /p subfilter=Please select subfilter (0:assrender , 1: xyvsf, 2:vsfm):
 
 set x264info=--demuxer y4m --threads 16 --preset slow --crf 23 --deblock 1:-1 --keyint 300 --min-keyint 1 --ref 6 --qpmax 36 --chroma-qp-offset 2 --me hex --psy-rd 0.60:0.15 --no-fast-pskip --colormatrix bt709 --colorprim bt709 --transfer bt709
 
@@ -132,8 +132,8 @@ echo source = r%mkv% >>"%~dpnx1_1080_sc.vpy"
 echo ass = r%sc% >>"%~dpnx1_1080_sc.vpy"
 echo src = core.lsmas.LWLibavSource(source,format="yuv420p10",cache=0) >>"%~dpnx1_1080_sc.vpy"
 echo src = mvf.Depth(src,depth=8) >>"%~dpnx1_1080_sc.vpy"
-if %subfilter%==0 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_1080_sc.vpy"
-if %subfilter%==1 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dpnx1_1080_sc.vpy"
+if %subfilter%==0 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dpnx1_1080_sc.vpy"
+if %subfilter%==1 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_1080_sc.vpy"
 if %subfilter%==2 echo res = core.vsfm.TextSubMod(src,ass).set_output() >>"%~dpnx1_1080_sc.vpy"
 
 echo %vspipe% --y4m "%~dpnx1_1080_sc.vpy" - ^| %x264% %x264info% --output "%~n1_1080p_sc.264" ->>"%~dpnx1_1080_sc.bat"
@@ -144,7 +144,7 @@ echo if exist "%~n1[1080p][CHS].mp4" del "%~dpnx1_1080_sc.vpy">>"%~dpnx1_1080_sc
 echo if exist "%~n1[1080p][CHS].mp4" del "%~n1_1080p_sc.264">>"%~dpnx1_1080_sc.bat"
 echo if exist "%~n1[1080p][JPSC].mp4" del "%~dpnx1_1080_sc.vpy">>"%~dpnx1_1080_sc.bat"
 echo if exist "%~n1[1080p][JPSC].mp4" del "%~n1_1080p_sc.264">>"%~dpnx1_1080_sc.bat"
-echo if exist "%~n1[1080p][JPSC].mp4" del "%~dpnx1_1080_sc.bat">>"%~dpnx1_1080_sc.bat"
+echo del "%~dpnx1_1080_sc.bat">>"%~dpnx1_1080_sc.bat"
 echo exit>>"%~dpnx1_1080_sc.bat"
 timeout 1
 start "coding %~n1 1080p sc" "%~dpnx1_1080_sc.bat"
@@ -168,8 +168,8 @@ echo source = r%mkv% >>"%~dpnx1_1080_tc.vpy"
 echo ass = r%tc% >>"%~dpnx1_1080_tc.vpy"
 echo src = core.lsmas.LWLibavSource(source,format="yuv420p10",cache=0) >>"%~dpnx1_1080_tc.vpy"
 echo src = mvf.Depth(src,depth=8) >>"%~dpnx1_1080_tc.vpy"
-if %subfilter%==0 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_1080_tc.vpy"
-if %subfilter%==1 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dpnx1_1080_tc.vpy"
+if %subfilter%==0 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dpnx1_1080_tc.vpy"
+if %subfilter%==1 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_1080_tc.vpy"
 if %subfilter%==2 echo res = core.vsfm.TextSubMod(src,ass).set_output() >>"%~dpnx1_1080_tc.vpy"
 
 echo %vspipe% --y4m "%~dpnx1_1080_tc.vpy" - ^| %x264% %x264info% --output "%~n1_1080p_tc.264" ->>"%~dpnx1_1080_tc.bat"
@@ -180,7 +180,7 @@ echo if exist "%~n1[1080p][CHT].mp4" del "%~dpnx1_1080_tc.vpy">>"%~dpnx1_1080_tc
 echo if exist "%~n1[1080p][CHT].mp4" del "%~n1_1080p_tc.264">>"%~dpnx1_1080_tc.bat"
 echo if exist "%~n1[1080p][JPTC].mp4" del "%~dpnx1_1080_tc.vpy">>"%~dpnx1_1080_tc.bat"
 echo if exist "%~n1[1080p][JPTC].mp4" del "%~n1_1080p_tc.264">>"%~dpnx1_1080_tc.bat"
-echo if exist "%~n1[1080p][JPTC].mp4" del "%~dpnx1_1080_tc.bat">>"%~dpnx1_1080_tc.bat"
+echo del "%~dpnx1_1080_tc.bat">>"%~dpnx1_1080_tc.bat"
 echo exit>>"%~dpnx1_1080_tc.bat"
 timeout 1
 start "coding %~n1 1080p tc" "%~dpnx1_1080_tc.bat"
@@ -205,8 +205,8 @@ echo ass = r%sc% >>"%~dpnx1_720_sc.vpy"
 echo src = core.lsmas.LWLibavSource(source,format="yuv420p10",cache=0) >>"%~dpnx1_720_sc.vpy"
 echo src = core.fmtc.resample(src,1280,720,kernel="lanczos",taps=4) >>"%~dpnx1_720_sc.vpy"
 echo src = mvf.Depth(src,depth=8) >>"%~dpnx1_720_sc.vpy"
-if %subfilter%==0 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_720_sc.vpy"
-if %subfilter%==1 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dpnx1_720_sc.vpy"
+if %subfilter%==0 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dpnx1_720_sc.vpy"
+if %subfilter%==1 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_720_sc.vpy"
 if %subfilter%==2 echo res = core.vsfm.TextSubMod(src,ass).set_output() >>"%~dpnx1_720_sc.vpy"
 
 echo %vspipe% --y4m "%~dpnx1_720_sc.vpy" - ^| %x264% %x264info% --output "%~n1_720p_sc.264" ->>"%~dpnx1_720_sc.bat"
@@ -217,7 +217,7 @@ echo if exist "%~n1[720p][CHS].mp4" del "%~dpnx1_720_sc.vpy">>"%~dpnx1_720_sc.ba
 echo if exist "%~n1[720p][CHS].mp4" del "%~n1_720p_sc.264">>"%~dpnx1_720_sc.bat"
 echo if exist "%~n1[720p][JPSC].mp4" del "%~dpnx1_720_sc.vpy">>"%~dpnx1_720_sc.bat"
 echo if exist "%~n1[720p][JPSC].mp4" del "%~n1_720p_sc.264">>"%~dpnx1_720_sc.bat"
-echo if exist "%~n1[720p][JPSC].mp4" del "%~dpnx1_720_sc.bat">>"%~dpnx1_720_sc.bat"
+echo del "%~dpnx1_720_sc.bat">>"%~dpnx1_720_sc.bat"
 echo exit>>"%~dpnx1_720_sc.bat"
 timeout 1
 start "coding %~n1 720 sc" "%~nx1_720_sc.bat"
@@ -239,8 +239,8 @@ echo ass = r%tc% >>"%~dpnx1_720_tc.vpy"
 echo src = core.lsmas.LWLibavSource(source,format="yuv420p10",cache=0) >>"%~dpnx1_720_tc.vpy"
 echo src = core.fmtc.resample(src,1280,720,kernel="lanczos",taps=4) >>"%~dpnx1_720_tc.vpy"
 echo src = mvf.Depth(src,depth=8) >>"%~dpnx1_720_tc.vpy"
-if %subfilter%==0 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_720_tc.vpy"
-if %subfilter%==1 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dpnx1_720_tc.vpy"
+if %subfilter%==0 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dpnx1_720_tc.vpy"
+if %subfilter%==1 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_720_tc.vpy"
 if %subfilter%==2 echo res = core.vsfm.TextSubMod(src,ass).set_output() >>"%~dpnx1_720_tc.vpy"
 
 echo %vspipe% --y4m "%~dpnx1_720_tc.vpy" - ^| %x264% %x264info% --output "%~n1_720p_tc.264" ->>"%~dpnx1_720_tc.bat"
@@ -251,7 +251,7 @@ echo if exist "%~n1[720p][CHT].mp4" del "%~dpnx1_720_tc.vpy">>"%~dpnx1_720_tc.ba
 echo if exist "%~n1[720p][CHT].mp4" del "%~n1_720p_tc.264">>"%~dpnx1_720_tc.bat"
 echo if exist "%~n1[720p][JPTC].mp4" del "%~dpnx1_720_tc.vpy">>"%~dpnx1_720_tc.bat"
 echo if exist "%~n1[720p][JPTC].mp4" del "%~n1_720p_tc.264">>"%~dpnx1_720_tc.bat"
-echo if exist "%~n1[720p][JPTC].mp4" del "%~dpnx1_720_tc.bat">>"%~dpnx1_720_tc.bat"
+echo del "%~dpnx1_720_tc.bat">>"%~dpnx1_720_tc.bat"
 echo exit>>"%~dpnx1_720_tc.bat"
 timeout 1
 start "coding %~n1 720 tc" "%~nx1_720_tc.bat"
