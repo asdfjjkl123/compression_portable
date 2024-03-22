@@ -5,6 +5,9 @@ call "%~dp0[0]set_path.bat"
 :branch
 set /p resolution=Please select output videos' resolution (0: 1080p, 1: 720p, 2:1080p+720p):
 set /p subfilter=Please select subfilter (0:assrender , 1: xyvsf, 2:vsfm):
+if %subfilter%==0 set subfilter=assrender.TextSub
+if %subfilter%==1 set subfilter=xyvsf.TextSub
+if %subfilter%==2 set subfilter=vsfm.TextSubMod
 
 set x264info=--demuxer y4m --threads 16 --preset slow --crf 23 --deblock 1:-1 --keyint 300 --min-keyint 1 --ref 6 --qpmax 36 --chroma-qp-offset 2 --me hex --psy-rd 0.60:0.15 --no-fast-pskip --colormatrix bt709 --colorprim bt709 --transfer bt709
 
@@ -21,14 +24,14 @@ set sc=0
 set tc=0
 set jpsc=0
 set jptc=0
-if exist "%~n1.SC.ass" set sc="%~n1.SC.ass"
-if exist "%~n1.TC.ass" set tc="%~n1.TC.ass"
-if exist "%~n1.CHS.ass" set sc="%~n1.CHS.ass"
-if exist "%~n1.CHT.ass" set tc="%~n1.CHT.ass"
-if exist "%~n1.JPSC.ass" set sc="%~n1.JPSC.ass"
-if exist "%~n1.JPTC.ass" set tc="%~n1.JPTC.ass"
-if exist "%~n1.JPSC.ass" set jpsc=1
-if exist "%~n1.JPTC.ass" set jptc=1
+if exist "%~dpn1.SC.ass" set sc="%~dpn1.SC.ass"
+if exist "%~dpn1.TC.ass" set tc="%~dpn1.TC.ass"
+if exist "%~dpn1.CHS.ass" set sc="%~dpn1.CHS.ass"
+if exist "%~dpn1.CHT.ass" set tc="%~dpn1.CHT.ass"
+if exist "%~dpn1.JPSC.ass" set sc="%~dpn1.JPSC.ass"
+if exist "%~dpn1.JPTC.ass" set tc="%~dpn1.JPTC.ass"
+if exist "%~dpn1.JPSC.ass" set jpsc=1
+if exist "%~dpn1.JPTC.ass" set jptc=1
 
 set Audio_Quality=192
 
@@ -37,14 +40,14 @@ set f720sexist=0
 set f720texist=0
 set f1080sexist=0
 set f1080texist=0
-if exist "%~n1[720p][CHT].mp4" set f720texist=1
-if exist "%~n1[720p][JPTC].mp4" set f720texist=1
-if exist "%~n1[720p][CHS].mp4" set f720sexist=1
-if exist "%~n1[720p][JPSC].mp4" set f720sexist=1
-if exist "%~n1[1080p][CHT].mp4" set f1080texist=1
-if exist "%~n1[1080p][JPTC].mp4" set f1080texist=1
-if exist "%~n1[1080p][CHS].mp4" set f1080sexist=1
-if exist "%~n1[1080p][JPSC].mp4" set f1080sexist=1
+if exist "%~n1_720p_tc.mp4" set f720texist=1
+if exist "%~n1_720p_jptc.mp4" set f720texist=1
+if exist "%~n1_720p_sc.mp4" set f720sexist=1
+if exist "%~n1_720p_jpsc.mp4" set f720sexist=1
+if exist "%~n1_1080p_tc.mp4" set f1080texist=1
+if exist "%~n1_1080p_jptc.mp4" set f1080texist=1
+if exist "%~n1_1080p_sc.mp4" set f1080sexist=1
+if exist "%~n1_1080p_jpsc.mp4" set f1080sexist=1
 
 set f720tcover=1
 set f720scover=1
@@ -113,41 +116,52 @@ if %resolution%==1 goto :720p
 if %resolution%==2 goto :1080p
 
 ::------------------------------------------------------------------------------------------
-:writecode
-::echo title file no%files%. "%~n1" 1080p sc
-
+:writecode_pre
+if exist "%~dpnx1_%resst%.vpy" del "%~dpnx1_%resst%.vpy"
+if exist "%~dpnx1_%resst%.bat" del "%~dpnx1_%resst%.bat"
+(
+echo import vapoursynth as vs
+echo import sys
+echo import mvsfunc as mvf
+echo from vapoursynth import core
+echo source = r%mkv%
+echo src = core.lsmas.LWLibavSource^(source,format="yuv420p10",cache=0^)
+echo src = mvf.Depth^(src,depth=8^)
+)>>"%~dpnx1_%resst%.vpy"
+goto :callback_pre%resst%
 ::------------------------------------------------------------------------------------------
+:writecode_post
+if %res720%==0 echo res = core.%subfilter%(src,ass).set_output() >>"%~dpnx1_%resst%.vpy"
+if %res720%==1 echo res = core.%subfilter%(src,ass).fmtc.resample(1280,720,kernel="lanczos",taps=4).set_output() >>"%~dpnx1_%resst%.vpy"
+set jpname="%~n1_%resst%.mp4"
+(
+echo %vspipe% --y4m "%~dpnx1_%resst%.vpy" - ^| %x264% %x264info% --output "%~n1_%resst%.264" -
+echo %mp4box% -add "%~n1_%resst%.264" -add "%~dpn1.aac" -new "%~n1_%resst%.mp4"
+echo if exist "%~n1_%resst%.mp4" del "%~dpnx1_%resst%.vpy"
+echo if exist "%~n1_%resst%.mp4" del "%~n1_%resst%.264"
+echo if %jpsc%==1 ren "%~n1_%resst%.mp4" %jpname:_CHS=_JPSC%
+echo if %jptc%==1 ren "%~n1_%resst%.mp4" %jpname:_CHT=_JPTC%
+echo del "%~dpnx1_%resst%.bat"
+)>>"%~dpnx1_%resst%.bat"
+timeout 1
+start "coding %~n1 %resst%" "%~dpnx1_%resst%.bat"
+
+goto :callback_post%resst%
+::------------------------------------------------------------------------------------------
+
 :1080p
 :1080sc
 if %sc%==0 goto :1080tc
 if %f1080scover%==0 goto :1080scfinish
 
-if exist "%~dpnx1_1080_sc.vpy" del "%~dpnx1_1080_sc.vpy"
-if exist "%~dpnx1_1080_sc.bat" del "%~dpnx1_1080_sc.bat"
-echo import vapoursynth as vs >>"%~dpnx1_1080_sc.vpy"
-echo import sys >>"%~dpnx1_1080_sc.vpy"
-echo import mvsfunc as mvf >>"%~dpnx1_1080_sc.vpy"
-echo from vapoursynth import core >>"%~dpnx1_1080_sc.vpy"
-echo source = r%mkv% >>"%~dpnx1_1080_sc.vpy"
-echo ass = r%sc% >>"%~dpnx1_1080_sc.vpy"
-echo src = core.lsmas.LWLibavSource(source,format="yuv420p10",cache=0) >>"%~dpnx1_1080_sc.vpy"
-echo src = mvf.Depth(src,depth=8) >>"%~dpnx1_1080_sc.vpy"
-if %subfilter%==0 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dpnx1_1080_sc.vpy"
-if %subfilter%==1 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_1080_sc.vpy"
-if %subfilter%==2 echo res = core.vsfm.TextSubMod(src,ass).set_output() >>"%~dpnx1_1080_sc.vpy"
+set resst=1080p_CHS
+set res720=0
+goto :writecode_pre
+:callback_pre1080p_CHS
+echo ass = r%sc% >>"%~dpnx1_%resst%.vpy"
+goto :writecode_post
+:callback_post1080p_CHS
 
-echo %vspipe% --y4m "%~dpnx1_1080_sc.vpy" - ^| %x264% %x264info% --output "%~n1_1080p_sc.264" ->>"%~dpnx1_1080_sc.bat"
-if %jpsc%==0 echo %mp4box% -add "%~n1_1080p_sc.264" -add "%~dpn1.aac" -new "%~n1[1080p][CHS].mp4">>"%~dpnx1_1080_sc.bat"
-if %jpsc%==1 echo %mp4box% -add "%~n1_1080p_sc.264" -add "%~dpn1.aac" -new "%~n1[1080p][JPSC].mp4">>"%~dpnx1_1080_sc.bat"
-
-echo if exist "%~n1[1080p][CHS].mp4" del "%~dpnx1_1080_sc.vpy">>"%~dpnx1_1080_sc.bat"
-echo if exist "%~n1[1080p][CHS].mp4" del "%~n1_1080p_sc.264">>"%~dpnx1_1080_sc.bat"
-echo if exist "%~n1[1080p][JPSC].mp4" del "%~dpnx1_1080_sc.vpy">>"%~dpnx1_1080_sc.bat"
-echo if exist "%~n1[1080p][JPSC].mp4" del "%~n1_1080p_sc.264">>"%~dpnx1_1080_sc.bat"
-echo del "%~dpnx1_1080_sc.bat">>"%~dpnx1_1080_sc.bat"
-echo exit>>"%~dpnx1_1080_sc.bat"
-timeout 1
-start "coding %~n1 1080p sc" "%~dpnx1_1080_sc.bat"
 :1080scfinish
 if %tc%==0 (
 	if %resolution%==2 goto :720sc
@@ -158,32 +172,14 @@ if %tc%==0 (
 :1080tc
 if %f1080tcover%==0 goto :1080tcfinish
 
-if exist "%~dpnx1_1080_tc.vpy" del "%~dpnx1_1080_tc.vpy"
-if exist "%~dpnx1_1080_tc.bat" del "%~dpnx1_1080_tc.bat"
-echo import vapoursynth as vs >>"%~dpnx1_1080_tc.vpy"
-echo import sys >>"%~dpnx1_1080_tc.vpy"
-echo import mvsfunc as mvf >>"%~dpnx1_1080_tc.vpy"
-echo from vapoursynth import core >>"%~dpnx1_1080_tc.vpy"
-echo source = r%mkv% >>"%~dpnx1_1080_tc.vpy"
-echo ass = r%tc% >>"%~dpnx1_1080_tc.vpy"
-echo src = core.lsmas.LWLibavSource(source,format="yuv420p10",cache=0) >>"%~dpnx1_1080_tc.vpy"
-echo src = mvf.Depth(src,depth=8) >>"%~dpnx1_1080_tc.vpy"
-if %subfilter%==0 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dpnx1_1080_tc.vpy"
-if %subfilter%==1 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_1080_tc.vpy"
-if %subfilter%==2 echo res = core.vsfm.TextSubMod(src,ass).set_output() >>"%~dpnx1_1080_tc.vpy"
+set resst=1080p_CHT
+set res720=0
+goto :writecode_pre
+:callback_pre1080p_CHT
+echo ass = r%tc% >>"%~dpnx1_%resst%.vpy"
+goto :writecode_post
+:callback_post1080p_CHT
 
-echo %vspipe% --y4m "%~dpnx1_1080_tc.vpy" - ^| %x264% %x264info% --output "%~n1_1080p_tc.264" ->>"%~dpnx1_1080_tc.bat"
-if %jptc%==0 echo %mp4box% -add "%~n1_1080p_tc.264" -add "%~dpn1.aac" -new "%~n1[1080p][CHT].mp4">>"%~dpnx1_1080_tc.bat"
-if %jptc%==1 echo %mp4box% -add "%~n1_1080p_tc.264" -add "%~dpn1.aac" -new "%~n1[1080p][JPTC].mp4">>"%~dpnx1_1080_tc.bat"
-
-echo if exist "%~n1[1080p][CHT].mp4" del "%~dpnx1_1080_tc.vpy">>"%~dpnx1_1080_tc.bat"
-echo if exist "%~n1[1080p][CHT].mp4" del "%~n1_1080p_tc.264">>"%~dpnx1_1080_tc.bat"
-echo if exist "%~n1[1080p][JPTC].mp4" del "%~dpnx1_1080_tc.vpy">>"%~dpnx1_1080_tc.bat"
-echo if exist "%~n1[1080p][JPTC].mp4" del "%~n1_1080p_tc.264">>"%~dpnx1_1080_tc.bat"
-echo del "%~dpnx1_1080_tc.bat">>"%~dpnx1_1080_tc.bat"
-echo exit>>"%~dpnx1_1080_tc.bat"
-timeout 1
-start "coding %~n1 1080p tc" "%~dpnx1_1080_tc.bat"
 :1080tcfinish
 if %resolution%==2 goto :720p
 shift /1
@@ -194,33 +190,14 @@ goto :start
 if %sc%==0 goto :720tc
 if %f720scover%==0 goto :720scfinish
 
-if exist "%~dpnx1_720_sc.vpy" del "%~dpnx1_720_sc.vpy"
-if exist "%~dpnx1_720_sc.bat" del "%~dpnx1_720_sc.bat"
-echo import vapoursynth as vs >>"%~dpnx1_720_sc.vpy"
-echo import sys >>"%~dpnx1_720_sc.vpy"
-echo import mvsfunc as mvf >>"%~dpnx1_720_sc.vpy"
-echo from vapoursynth import core >>"%~dpnx1_720_sc.vpy"
-echo source = r%mkv% >>"%~dpnx1_720_sc.vpy"
-echo ass = r%sc% >>"%~dpnx1_720_sc.vpy"
-echo src = core.lsmas.LWLibavSource(source,format="yuv420p10",cache=0) >>"%~dpnx1_720_sc.vpy"
-echo src = core.fmtc.resample(src,1280,720,kernel="lanczos",taps=4) >>"%~dpnx1_720_sc.vpy"
-echo src = mvf.Depth(src,depth=8) >>"%~dpnx1_720_sc.vpy"
-if %subfilter%==0 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dpnx1_720_sc.vpy"
-if %subfilter%==1 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_720_sc.vpy"
-if %subfilter%==2 echo res = core.vsfm.TextSubMod(src,ass).set_output() >>"%~dpnx1_720_sc.vpy"
+set resst=720p_CHS
+set res720=1
+goto :writecode_pre
+:callback_pre720p_CHS
+echo ass = r%tc% >>"%~dpnx1_%resst%.vpy"
+goto :writecode_post
+:callback_post720p_CHS
 
-echo %vspipe% --y4m "%~dpnx1_720_sc.vpy" - ^| %x264% %x264info% --output "%~n1_720p_sc.264" ->>"%~dpnx1_720_sc.bat"
-if %jpsc%==0 echo %mp4box% -add "%~n1_720p_sc.264" -add "%~dpn1.aac" -new "%~n1[720p][CHS].mp4">>"%~dpnx1_720_sc.bat"
-if %jpsc%==1 echo %mp4box% -add "%~n1_720p_sc.264" -add "%~dpn1.aac" -new "%~n1[720p][JPSC].mp4">>"%~dpnx1_720_sc.bat"
-
-echo if exist "%~n1[720p][CHS].mp4" del "%~dpnx1_720_sc.vpy">>"%~dpnx1_720_sc.bat"
-echo if exist "%~n1[720p][CHS].mp4" del "%~n1_720p_sc.264">>"%~dpnx1_720_sc.bat"
-echo if exist "%~n1[720p][JPSC].mp4" del "%~dpnx1_720_sc.vpy">>"%~dpnx1_720_sc.bat"
-echo if exist "%~n1[720p][JPSC].mp4" del "%~n1_720p_sc.264">>"%~dpnx1_720_sc.bat"
-echo del "%~dpnx1_720_sc.bat">>"%~dpnx1_720_sc.bat"
-echo exit>>"%~dpnx1_720_sc.bat"
-timeout 1
-start "coding %~n1 720 sc" "%~nx1_720_sc.bat"
 :720scfinish
 if %tc%==0 shift /1
 if %tc%==0 goto :start
@@ -228,33 +205,14 @@ if %tc%==0 goto :start
 :720tc
 if %f720tcover%==0 goto :720tcfinish
 
-if exist "%~dpnx1_720_tc.vpy" del "%~dpnx1_720_tc.vpy"
-if exist "%~dpnx1_720_tc.bat" del "%~dpnx1_720_tc.bat"
-echo import vapoursynth as vs >>"%~dpnx1_720_tc.vpy"
-echo import sys >>"%~dpnx1_720_tc.vpy"
-echo import mvsfunc as mvf >>"%~dpnx1_720_tc.vpy"
-echo from vapoursynth import core >>"%~dpnx1_720_tc.vpy"
-echo source = r%mkv% >>"%~dpnx1_720_tc.vpy"
-echo ass = r%tc% >>"%~dpnx1_720_tc.vpy"
-echo src = core.lsmas.LWLibavSource(source,format="yuv420p10",cache=0) >>"%~dpnx1_720_tc.vpy"
-echo src = core.fmtc.resample(src,1280,720,kernel="lanczos",taps=4) >>"%~dpnx1_720_tc.vpy"
-echo src = mvf.Depth(src,depth=8) >>"%~dpnx1_720_tc.vpy"
-if %subfilter%==0 echo res = core.assrender.TextSub(src,ass).set_output() >>"%~dpnx1_720_tc.vpy"
-if %subfilter%==1 echo res = core.xyvsf.TextSub(src,ass).set_output() >>"%~dpnx1_720_tc.vpy"
-if %subfilter%==2 echo res = core.vsfm.TextSubMod(src,ass).set_output() >>"%~dpnx1_720_tc.vpy"
+set resst=720p_CHT
+set res720=1
+goto :writecode_pre
+:callback_pre720p_CHT
+echo ass = r%tc% >>"%~dpnx1_%resst%.vpy"
+goto :writecode_post
+:callback_post720p_CHT
 
-echo %vspipe% --y4m "%~dpnx1_720_tc.vpy" - ^| %x264% %x264info% --output "%~n1_720p_tc.264" ->>"%~dpnx1_720_tc.bat"
-if %jptc%==0 echo %mp4box% -add "%~n1_720p_tc.264" -add "%~dpn1.aac" -new "%~n1[720p][CHT].mp4">>"%~dpnx1_720_tc.bat"
-if %jptc%==1 echo %mp4box% -add "%~n1_720p_tc.264" -add "%~dpn1.aac" -new "%~n1[720p][JPTC].mp4">>"%~dpnx1_720_tc.bat"
-
-echo if exist "%~n1[720p][CHT].mp4" del "%~dpnx1_720_tc.vpy">>"%~dpnx1_720_tc.bat"
-echo if exist "%~n1[720p][CHT].mp4" del "%~n1_720p_tc.264">>"%~dpnx1_720_tc.bat"
-echo if exist "%~n1[720p][JPTC].mp4" del "%~dpnx1_720_tc.vpy">>"%~dpnx1_720_tc.bat"
-echo if exist "%~n1[720p][JPTC].mp4" del "%~n1_720p_tc.264">>"%~dpnx1_720_tc.bat"
-echo del "%~dpnx1_720_tc.bat">>"%~dpnx1_720_tc.bat"
-echo exit>>"%~dpnx1_720_tc.bat"
-timeout 1
-start "coding %~n1 720 tc" "%~nx1_720_tc.bat"
 :720tcfinish
 shift /1
 goto :start
