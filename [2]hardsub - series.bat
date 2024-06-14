@@ -53,10 +53,10 @@ set f720tcover=1
 set f720scover=1
 set f1080tcover=1
 set f1080scover=1
-if %f720texist%==1 set /p f720tcover=720tc already exist cover it?(0:no, 1:yes):
-if %f720sexist%==1 set /p f720scover=720sc already exist cover it?(0:no, 1:yes):
-if %f1080texist%==1 set /p f1080tcover=1080tc already exist cover it?(0:no, 1:yes):
-if %f1080sexist%==1 set /p f1080scover=1080sc already exist cover it?(0:no, 1:yes):
+if %f720texist%==1 set /p f720tcover=%~n1 720tc already exist cover it?(0:no, 1:yes):
+if %f720sexist%==1 set /p f720scover=%~n1 720sc already exist cover it?(0:no, 1:yes):
+if %f1080texist%==1 set /p f1080tcover=%~n1 1080tc already exist cover it?(0:no, 1:yes):
+if %f1080sexist%==1 set /p f1080scover=%~n1 1080sc already exist cover it?(0:no, 1:yes):
 
 ::audio
 set name="%~nx1"
