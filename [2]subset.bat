@@ -12,6 +12,12 @@ IF "%~1"=="" GOTO :end
 if exist "ass_warn.log" del "ass_warn.log"
 if exist "temp.bat" del "temp.bat"
 
+::check subset mkv exist
+set continue=2
+if exist "%~dpn1_subset.mkv" set /p continue=find "%~n1_subset.mkv" do you want to continue (0: yes, 1:no(stop)):
+if %continue%==1 goto :end
+if %continue%==0 del "%~dpn1_subset.mkv"
+
 set /a files+=1
 set continue=0
 set mkv="%~1"
@@ -105,10 +111,6 @@ if %continue%==1 goto :end
 del ass_warn.log
 
 :mux
-if exist "%~dpn1_subset.mkv" set /p continue=find "%~n1_subset.mkv" do you want to continue (0: yes, 1:no(stop)):
-if %continue%==1 goto :end
-if %continue%==0 del "%~dpn1_subset.mkv"
-
 %mmg% -o "%~dpn1_subset.mkv" --language 0:und --no-subtitles --no-attachments "%~dpn1.mkv" --language 0:und --default-track 0:yes --track-name "0:SC" %sc% --language 0:und --default-track 0:yes --track-name "0:TC" %tc% %subsetcommand%
 
 

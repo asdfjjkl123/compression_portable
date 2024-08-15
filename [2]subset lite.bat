@@ -11,6 +11,12 @@ IF "%~1"=="" GOTO :end
 
 if exist "%~dp1outfonts.txt" del "%~dp1outfonts.txt"
 
+::check subset mkv exist
+set continue=2
+if exist "%~dpn1_subset.mkv" set /p continue=find "%~n1_subset.mkv" do you want to continue (0: yes, 1:no(stop)):
+if %continue%==1 goto :end
+if %continue%==0 del "%~dpn1_subset.mkv"
+
 set /a files+=1
 set continue=0
 set mkv="%~1"
