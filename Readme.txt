@@ -42,6 +42,6 @@ subset lite版:
 
 使用subset前,若先前出報錯關閉後,盡管運行前會自動刪除舊有的臨時文件,但建議手動刪除字幕文件夾下的ass_warn.log, temp.bat, temp.txt, outfonts.txt
 
-便攜包打包日期:2024/03/22
+便攜包打包日期:2024/08/31
 
 最新bat文件請到:https://github.com/asdfjjkl123/compression_protable

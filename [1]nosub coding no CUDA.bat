@@ -59,7 +59,6 @@ echo import havsfunc as haf >>"%~dp1%~nx1.vpy"
 echo import mvsfunc as mvf >>"%~dp1%~nx1.vpy"
 echo import nnedi3_resample as nnrs >>"%~dp1%~nx1.vpy"
 echo import descale as ds >>"%~dp1%~nx1.vpy"
-echo import SHDdering_mod2 as shd2 >>"%~dp1%~nx1.vpy"
 echo import math as math >>"%~dp1%~nx1.vpy"
 
 echo core.num_threads = 4 >>"%~dp1%~nx1.vpy"
@@ -122,8 +121,7 @@ echo debd  = mvf.LimitFilter(debd,nr16,thr=0.6,thrc=0.5,elast=2.0) >>"%~dp1%~nx1
 echo debd  = core.std.MaskedMerge(debd,nr16,nrmask,first_plane=True) >>"%~dp1%~nx1.vpy"
 
 echo denoised_Y = core.std.ShufflePlanes(debd,0,vs.GRAY) >>"%~dp1%~nx1.vpy"
-echo dr = shd2.SHDdering_mod2(denoised_Y, r=3.0, dering_pass=2, source=src16) >>"%~dp1%~nx1.vpy"
-echo res = core.std.ShufflePlanes([dr, debd], planes=[0,1,2], colorfamily=vs.YUV) >>"%~dp1%~nx1.vpy"
+echo res = core.std.ShufflePlanes([denoised_Y, debd], planes=[0,1,2], colorfamily=vs.YUV) >>"%~dp1%~nx1.vpy"
 
 echo res = mvf.Depth(res,10,useZ=True).set_output() >>"%~dp1%~nx1.vpy"
 
