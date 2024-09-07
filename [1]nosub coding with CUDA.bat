@@ -3,21 +3,38 @@
 call "%~dp0[0]set_path.bat"
 
 :branch
+set x265info=--y4m -D 10 --deblock -1:-1 --preset slower --tune lp++ --ctu 32 --qg-size 8 --crf 18.0 --pbratio 1.2 --cbqpoffs -2 --crqpoffs -2 --no-sao --me 3 --subme 5 --merange 38 --b-intra --limit-tu 4 --no-rect --no-amp --ref 4 --weightb --keyint 240 --min-keyint 1 --bframes 6 --aq-mode 1 --aq-strength 0.8 --rd 5 --psy-rd 2.0 --psy-rdoq 1.0 --rdoq-level 2 --no-open-gop --rc-lookahead 80 --scenecut 40 --qcomp 0.65 --no-strong-intra-smoothing --range limited --colorprim bt709 --transfer bt709 --colormatrix bt709 --chromaloc 0
 set files=0
 set shutdown=0
 set /p shutdown=Shutdown computer when coding finished (0:no, 1:yes):
 set allfilesame=0
 set /p allfilesame=all file use same setting? (0:no, 1:yes):
 set trim=0
-if %allfilesame%==1 set /p trim=trim:
+if %allfilesame%==1 set /p trim=header trim in frames(0: no trim):
+set customizeres=0
+if %allfilesame%==1 set /p customizeres=use customize resoulusion? (0:default_1920x1080, 1:customize):
+if %customizeres%==1 set /p cuswidth=please set width:
+if %customizeres%==1 set /p cusheight=please set height:
 set dsres=0
-if %allfilesame%==1 set /p dsres=please set descale resoulusion(0:no descale):
+if %allfilesame%==1 if customizers==0 set /p dsres=please set descale resoulusion(0:no descale):
 set dsfilter=0
 if not %dsres%==0 set /p dsfilter=please set ds filter(1:Debilinear,2:Debicubic,3:Delanczos,4:Despline16,5:Despline36,6:Despline64):
 set dsaa=0
 if %allfilesame%==1 set /p dsaa=anti-aliasing(0:no, 1:yes):
 
 :start_audio
+if %allfilesame%==0 set /p trim=header trim:
+if %allfilesame%==0 set customizeres=0
+if %allfilesame%==0 set /p customizeres=use customize resoulusion? (0:default_1920x1080, 1:customize):
+if %allfilesame%==0 if %customizeres%==1 set /p cuswidth=please set width:
+if %allfilesame%==0 if %customizeres%==1 set /p cusheight=please set height:
+if %allfilesame%==0 set dsres=0
+if %allfilesame%==0 if customizers==0 set /p dsres=please set descale resoulusion(0:no descale):
+if %allfilesame%==0 set dsfilter=0
+if not %dsres%==0 set /p dsfilter=please set ds filter(1:Debilinear,2:Debicubic,3:Delanczos,4:Despline16,5:Despline36,6:Despline64):
+if %allfilesame%==0 set dsaa=0
+if %allfilesame%==0 set /p dsaa=anti-aliasing(0:no, 1:yes):
+
 if "%~1"=="" goto :end
 set /a files+=1
 
@@ -35,14 +52,10 @@ if %trim% GTR 0 %ffmpeg% -ss %trimaudio% -i "%~dpn1.aac" -acodec copy "%~dp1%~nx
 
 :start_video
 set video="%~1"
-set x265info=--y4m -D 10 --deblock -1:-1 --preset slower --tune lp++ --ctu 32 --qg-size 8 --crf 18.0 --pbratio 1.2 --cbqpoffs -2 --crqpoffs -2 --no-sao --me 3 --subme 5 --merange 38 --b-intra --limit-tu 4 --no-rect --no-amp --ref 4 --weightb --keyint 240 --min-keyint 1 --bframes 6 --aq-mode 1 --aq-strength 0.8 --rd 5 --psy-rd 2.0 --psy-rdoq 1.0 --rdoq-level 2 --no-open-gop --rc-lookahead 80 --scenecut 40 --qcomp 0.65 --no-strong-intra-smoothing --range limited --colorprim bt709 --transfer bt709 --colormatrix bt709 --chromaloc 0 --log-file "log loli output.txt" --log-file-level debug
 
 @echo.
 echo start coding file no%files%. %~n1
 @echo.
-
-if %allfilesame%==0 set /p trim=trim:
-if %allfilesame%==0 set /p dsres=please set descale resoulusion(0:no descale):
 
 if %allfilesame%==0 if not %dsres%==0 set /p dsfilter=please set ds filter(1:Debilinear,2:Debicubic,3:Delanczos,4:Despline16,5:Despline36,6:Despline64):
 if %dsfilter%==1 set dsfilter=Debilinear
@@ -68,8 +81,9 @@ echo source = r%video% >>"%~dp1%~nx1.vpy"
 
 echo src8 = core.lsmas.LWLibavSource(source,threads=0,repeat=True) >>"%~dp1%~nx1.vpy"
 if %trim% gtr 0 echo src8 = core.std.Trim(src8,%trim%) >>"%~dp1%~nx1.vpy"
-echo if src8.width !=1920: >>"%~dp1%~nx1.vpy"
-echo 	src8 = core.fmtc.resample(src8,1920,1080,kernel="lanczos",taps=4) >>"%~dp1%~nx1.vpy"
+if %customizeres%==0 echo if src8.width !=1920: >>"%~dp1%~nx1.vpy"
+if %customizeres%==0 echo 	src8 = core.fmtc.resample(src8,1920,1080,kernel="lanczos",taps=4) >>"%~dp1%~nx1.vpy"
+if %customizeres%==1 echo src8 = core.fmtc.resample(src8,%cuswidth%,%cusheight%,kernel="lanczos",taps=4) >>"%~dp1%~nx1.vpy"
 
 echo src16 = mvf.Depth(src8, depth=16, useZ=True) >>"%~dp1%~nx1.vpy"
 

@@ -6,6 +6,9 @@ Drag the files to bat as you need.
 [2]Hardsub: hardcoded subtitle (mp4), subset: build-in subtitle (mkv), check ass fonts: for checking is font has missing character.
 [3]making torrent.
 
+The nosub.bat requires a graphics card regardless of CUDA version. If you don't have a graphics card, please right-click > Edit noCUDA version, ctrl+h to replace GPU with CPU
+The nosub.bat will stretch sources with width other than 1920 to 1920*1080(1080p). Users can also set a customize resolution.
+
 video and subtitle matching rules:
 video:a.mkv
 subtitle can be a.[sc/tc/chs/cht/jpsc/jptc].ass
@@ -27,6 +30,9 @@ Before using subset, if an error is reported at last time, it is recommended to 
 [1]壓外掛用,非N卡及沒裝CUDA的,請選擇no CUDA
 [2]hardsub:內嵌, subset:內封, check ass fonts:查缺字
 [3]製種
+
+壓外掛的nosub無論有沒有CUDA, 均需要顯卡, 無顯卡使用者請右鍵>編輯no CUDA版本, ctrl+h 替換GPU為CPU
+壓外掛的nosub會將寬度不等於1920的源拉伸成1920*1080(1080p), 使用者亦可自設其他分辨率
 
 視頻和字幕匹配規則:
 視頻a.mkv
