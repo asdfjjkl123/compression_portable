@@ -16,7 +16,7 @@ if %allfilesame%==1 set /p customizeres=use customize resoulusion? (0:default_19
 if %customizeres%==1 set /p cuswidth=please set width:
 if %customizeres%==1 set /p cusheight=please set height:
 set dsres=0
-if %allfilesame%==1 if customizers==0 set /p dsres=please set descale resoulusion(0:no descale):
+if %allfilesame%==1 if customizeres==0 set /p dsres=please set descale resoulusion(0:no descale):
 set dsfilter=0
 if not %dsres%==0 set /p dsfilter=please set ds filter(1:Debilinear,2:Debicubic,3:Delanczos,4:Despline16,5:Despline36,6:Despline64):
 set dsaa=0
@@ -29,7 +29,7 @@ if %allfilesame%==0 set /p customizeres=use customize resoulusion? (0:default_19
 if %allfilesame%==0 if %customizeres%==1 set /p cuswidth=please set width:
 if %allfilesame%==0 if %customizeres%==1 set /p cusheight=please set height:
 if %allfilesame%==0 set dsres=0
-if %allfilesame%==0 if customizers==0 set /p dsres=please set descale resoulusion(0:no descale):
+if %allfilesame%==0 if customizeres==0 set /p dsres=please set descale resoulusion(0:no descale):
 if %allfilesame%==0 set dsfilter=0
 if not %dsres%==0 set /p dsfilter=please set ds filter(1:Debilinear,2:Debicubic,3:Delanczos,4:Despline16,5:Despline36,6:Despline64):
 if %allfilesame%==0 set dsaa=0
@@ -42,7 +42,7 @@ if exist "%~dp1%~nx1.vpy" del "%~dp1%~nx1.vpy"
 if exist "%~dp1%~nx1.lwi" del "%~dp1%~nx1.lwi"
 if exist "%~dpn1.hevc" del "%~dpn1.hevc"
 
-%eac3to% "%~1" "%~dpn1".aac -log=nul
+if not exist "%~dpn1".aac %eac3to% "%~1" "%~dpn1".aac -log=nul
 
 if %trim% GTR 0 set /a trimaudio=%trim%*1001*10/24
 if %trim% GTR 0 set /a trimaudio=%trimaudio%+5
@@ -73,9 +73,6 @@ echo import mvsfunc as mvf >>"%~dp1%~nx1.vpy"
 echo import nnedi3_resample as nnrs >>"%~dp1%~nx1.vpy"
 echo import descale as ds >>"%~dp1%~nx1.vpy"
 echo import math as math >>"%~dp1%~nx1.vpy"
-
-echo core.num_threads = 4 >>"%~dp1%~nx1.vpy"
-echo core.max_cache_size = 13000 >>"%~dp1%~nx1.vpy"
 
 echo source = r%video% >>"%~dp1%~nx1.vpy"
 
