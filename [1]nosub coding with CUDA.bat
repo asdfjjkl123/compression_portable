@@ -31,7 +31,7 @@ if %allfilesame%==0 if %customizeres%==1 set /p cusheight=please set height:
 if %allfilesame%==0 set dsres=0
 if %allfilesame%==0 if %customizeres%==0 set /p dsres=please set descale resoulusion(0:no descale):
 if %allfilesame%==0 set dsfilter=0
-if not %dsres%==0 set /p dsfilter=please set ds filter(1:Debilinear,2:Debicubic,3:Delanczos,4:Despline16,5:Despline36,6:Despline64):
+if %allfilesame%==0 if not %dsres%==0 set /p dsfilter=please set ds filter(1:Debilinear,2:Debicubic,3:Delanczos,4:Despline16,5:Despline36,6:Despline64):
 if %allfilesame%==0 set dsaa=0
 if %allfilesame%==0 set /p dsaa=anti-aliasing(0:no, 1:yes):
 
