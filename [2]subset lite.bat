@@ -62,7 +62,7 @@ goto :readfonts
 
 :mux
 del "%~dp1outfonts.txt"
-%mmg% -o "%~dpn1_subset.mkv" --language 0:und --no-subtitles --no-attachments "%~dpn1.mkv" --language 0:und --default-track 0:yes --track-name "0:SC" %sc% --language 0:und --default-track 0:yes --track-name "0:TC" %tc% %subsetcommand%
+%mmg% -o "%~dpn1_subset.mkv" --language 0:und --no-subtitles --no-attachments "%~dpn1.mkv" --language 0:zh-Hans --default-track 0:yes --track-name "0:SC" %sc% --language 0:zh-Hant --default-track 0:yes --track-name "0:TC" %tc% %subsetcommand%
 
 SHIFT /1
 GOTO :start

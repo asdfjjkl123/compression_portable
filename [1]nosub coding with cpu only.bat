@@ -41,8 +41,13 @@ set /a files+=1
 if exist "%~dp1%~nx1.vpy" del "%~dp1%~nx1.vpy"
 if exist "%~dp1%~nx1.lwi" del "%~dp1%~nx1.lwi"
 if exist "%~dpn1.hevc" del "%~dpn1.hevc"
+if exist "%~dpn1.aac.m4a" del "%~dpn1.aac.m4a"
 
 if not exist "%~dpn1".aac %eac3to% "%~1" "%~dpn1".aac -log=nul
+if exist "%~dpn1".aac.m4a %eac3to% "%~1" "%~dpn1".flac -log=nul
+if exist "%~dpn1".aac.m4a del "%~dpn1".aac.m4a
+if exist "%~dpn1".flac %qaac64% -v 128 --no-smart-padding --threading -o "%~dpn1".aac "%~dpn1".flac
+if not exist "%~dpn1".aac %ffmpeg% -i "%~dpnx1" -b:a 128k "%~dpn1.aac"
 
 if %trim% GTR 0 set /a trimaudio=%trim%*1001*10/24
 if %trim% GTR 0 set /a trimaudio=%trimaudio%+5
